@@ -298,7 +298,9 @@ public class Model {
 			BufferedWriter writer = new BufferedWriter(new FileWriter(filename));
 			for (int i = 0; i < M; i++){
 				for (int j = 0; j < K; j++){
-					writer.write(theta[i][j] + " ");
+					//修改了保留小数位数
+					writer.write(new java.text.DecimalFormat("0.000000").format(theta[i][j]) + " ");
+					//writer.write(theta[i][j] + " ");
 				}
 				writer.write("\n");
 			}
@@ -322,7 +324,9 @@ public class Model {
 			
 			for (int i = 0; i < K; i++){
 				for (int j = 0; j < V; j++){
-					writer.write(phi[i][j] + " ");
+					//修改了保留小数位数
+					writer.write(new java.text.DecimalFormat("0.00000000").format(phi[i][j]) + " ");
+					//writer.write(phi[i][j] + " ");
 				}
 				writer.write("\n");
 			}
@@ -387,8 +391,9 @@ public class Model {
 				for (int i = 0; i < twords; i++){
 					if (data.localDict.contains((Integer)wordsProbsList.get(i).first)){
 						String word = data.localDict.getWord((Integer)wordsProbsList.get(i).first);
-						
-						writer.write("\t" + word + " " + wordsProbsList.get(i).second + "\n");
+						//修改了保留小数位数
+						writer.write("\t" + word + " \t" + new java.text.DecimalFormat("0.000000").format(wordsProbsList.get(i).second) + "\n");
+						//writer.write("\t" + word + " " + wordsProbsList.get(i).second + "\n");
 					}
 				}
 			} //end foreach topic			

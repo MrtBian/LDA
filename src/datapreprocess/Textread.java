@@ -7,77 +7,81 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 
 public class Textread {
 	DataConfig dataconfig = new DataConfig();
-	String datadir = dataconfig.datadir;
+	String dbpath = dataconfig.dbpath;
 	ArrayList<ArrayList<String>> docs;
 	ArrayList<String> stopwords;
+	Connection conn;
+	Statement stat;
 	
 	public Textread(){
 		Stopwords sw = new Stopwords();
 		stopwords = sw.stopWords;
 		docs = new ArrayList<ArrayList<String>>();
+		conn = getConnection();
 	}
 	
-	public void readDocs() throws IOException{// get all names of docs
-		String docsPath = this.datadir;
-		for(File docFile : new File(docsPath).listFiles()){
-			BufferedReader reader = null;
-	        try {
-	            //System.out.println("以行为单位读取文件内容，一次读一整行：");
-	            reader = new BufferedReader(new FileReader(docFile));
-	            String tempString = null;
-	            //int line = 1;
-	            // 一次读入一行，直到读入null为文件结束
-	            while ((tempString = reader.readLine()) != null) {
-	            	if(tempString.length()<5){
-	            		continue;
-	            	}
-	                String str = tempString.substring(0, 3);
-	                //System.out.println(str);
-	            	if(str.equals("摘要:")){
-	            		String temp = tempString.substring(3);
-	            		String []strs = temp.split("[ ,.?!()1-9\"]");
-	            		ArrayList<String> tempArray = new ArrayList<String>();
-	            		for(String s:strs){
-	            			s=s.toLowerCase();
-	            			if(!stopwords.contains(s)&&s.length()>1){
-	            				if(s.equals("of"))
-	            					System.out.println(s);
-	            				tempArray.add(s);
-	            			}
-	            		}
-	            		docs.add(tempArray);
-	            	}
-	            }
-	            reader.close();
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	        } finally {
-	            if (reader != null) {
-	                try {
-	                    reader.close();
-	                } catch (IOException e1) {
-	                }
-	            }
-	        }
+	public Connection getConnection(){
+        try
+        {
+            Class.forName("org.sqlite.JDBC");
+            Connection conn = DriverManager.getConnection("jdbc:sqlite:"+dbpath);
+            //System.out.println("connect");
+            return conn;
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+	public void getData() throws IOException, SQLException{// get all names of docs
+		try {
+			stat=conn.createStatement();
+		} catch (SQLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
 		}
+		String sql = "select * from document";
+		ResultSet rs = stat.executeQuery(sql);
+		while(rs.next()){
+			//System.out.println(rs.getRow());
+			String temp = rs.getString("title")+" "+rs.getString("abstract")+" "+rs.getString("keywords");
+			//System.out.println(temp);
+			String []strs = temp.split("[ <>/\\,;.?!:()0-9\"“”{}]");
+			ArrayList<String> tempArray = new ArrayList<String>();
+    		for(String s:strs){
+    			s=s.toLowerCase();
+    			if(!stopwords.contains(s)&&s.length()>1){
+    				tempArray.add(s);
+    			}
+    		}
+    		docs.add(tempArray);
+		}
+		rs.close();
+		conn.close();
 	}
 	
 	public void writeData(String datapath){
 		File file = new File(datapath);
+		if(file.exists()&&file.isFile())
+            file.delete();
 		BufferedWriter writer = null;
         try {
         	writer = new BufferedWriter(new OutputStreamWriter(
         			new FileOutputStream(file, true)));
         	ArrayList<ArrayList<String>> temp = docs;
+        	//System.out.println(temp.size());
         	int numofdoc = temp.size();
         	writer.write(numofdoc+"\n");
         	for(ArrayList<String> arr:temp){
@@ -99,9 +103,9 @@ public class Textread {
         }
 	}
 	
-	public static void main(String args[]) throws IOException{
+	public static void main(String args[]) throws IOException, SQLException{
 		Textread textread = new Textread();
-		textread.readDocs();
+		textread.getData();
 		ArrayList<ArrayList<String>> temp = textread.docs;
 		/*
 		int c=0,lc=0;

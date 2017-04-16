@@ -1,0 +1,110 @@
+Topic 0th:
+	object 	0.091323
+	detection 	0.060160
+	recognition 	0.016219
+	objects 	0.015795
+	image 	0.013753
+	feature 	0.013255
+	features 	0.011411
+	extraction 	0.009991
+	detectors 	0.009095
+	model 	0.008696
+Topic 1th:
+	learning 	0.056147
+	training 	0.021521
+	image 	0.020483
+	classification 	0.019195
+	data 	0.014999
+	artificial 	0.009495
+	recognition 	0.009349
+	intelligence 	0.009328
+	support 	0.009328
+	vector 	0.008996
+Topic 2th:
+	algorithm 	0.017543
+	methods 	0.015148
+	optimization 	0.015051
+	computer 	0.014077
+	vision 	0.014038
+	data 	0.013766
+	method 	0.013240
+	matrix 	0.011761
+	algorithms 	0.009931
+	linear 	0.008899
+Topic 3th:
+	shape 	0.041740
+	image 	0.023293
+	surface 	0.021371
+	model 	0.014274
+	registration 	0.013685
+	models 	0.009226
+	data 	0.008868
+	deformable 	0.008714
+	images 	0.008202
+	geometry 	0.008150
+Topic 4th:
+	image 	0.055407
+	recognition 	0.037826
+	feature 	0.025428
+	matching 	0.024751
+	analysis 	0.016789
+	representation 	0.016393
+	retrieval 	0.013497
+	images 	0.011793
+	features 	0.011746
+	local 	0.011303
+Topic 5th:
+	video 	0.024413
+	recognition 	0.020913
+	action 	0.015678
+	visual 	0.015090
+	human 	0.012914
+	vision 	0.012179
+	image 	0.010120
+	system 	0.009002
+	computer 	0.008914
+	data 	0.008355
+Topic 6th:
+	image 	0.055106
+	segmentation 	0.053512
+	model 	0.017642
+	graph 	0.015525
+	algorithm 	0.014193
+	random 	0.010744
+	markov 	0.010591
+	bayesian 	0.009805
+	methods 	0.009543
+	probabilistic 	0.009521
+Topic 7th:
+	image 	0.054741
+	images 	0.016624
+	color 	0.015692
+	surface 	0.015372
+	light 	0.014866
+	illumination 	0.013960
+	lighting 	0.012655
+	scene 	0.011590
+	resolution 	0.010071
+	shape 	0.008367
+Topic 8th:
+	motion 	0.061959
+	tracking 	0.041691
+	estimation 	0.027846
+	sequences 	0.026429
+	video 	0.025055
+	image 	0.014467
+	flow 	0.012961
+	analysis 	0.012894
+	model 	0.012651
+	optical 	0.010878
+Topic 9th:
+	image 	0.039692
+	reconstruction 	0.030086
+	stereo 	0.024861
+	cameras 	0.022344
+	camera 	0.022268
+	vision 	0.015140
+	calibration 	0.013238
+	computer 	0.012662
+	geometry 	0.012662
+	images 	0.011644

@@ -30,23 +30,21 @@ package jgibblda;
 import datapreprocess.Textread;
 
 import java.io.IOException;
+import java.sql.SQLException;
 
 import org.kohsuke.args4j.*;
 
 public class LDA {
 	
-	public static void main(String args[]){
+	public static void main(String args[]) throws SQLException, IOException{
 		LDACmdOption option = new LDACmdOption();
 		CmdLineParser parser = new CmdLineParser(option);
+		
+		//Data preprocess
 		Textread tr = new Textread();
-		try {
-			tr.readDocs();
-		} catch (IOException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		tr.writeData(option.dir+"/"+option.dfile);
-		tr.writeData("d.txt");
+		//tr.getData();
+		//tr.writeData(option.dir+"/"+option.dfile);
+		//tr.writeData("d.txt");
 		try {
 			if (args.length == 0){
 				showHelp(parser);
