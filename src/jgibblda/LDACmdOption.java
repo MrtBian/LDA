@@ -32,7 +32,7 @@ public class LDACmdOption {
 	public int K = 10;
 	
 	@Option(name="-niters", usage="Specify the number of iterations")
-	public int niters = 500;
+	public int niters = 200;
 	
 	@Option(name="-savestep", usage="Specify the number of steps to save the model since the last save")
 	public int savestep = 100;

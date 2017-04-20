@@ -36,22 +36,16 @@ import org.kohsuke.args4j.*;
 
 public class LDA {
 	
-	public static void main(String args[]) throws SQLException, IOException{
+	public LDA() throws SQLException, IOException{
 		LDACmdOption option = new LDACmdOption();
 		CmdLineParser parser = new CmdLineParser(option);
 		
 		//Data preprocess
 		Textread tr = new Textread();
-		//tr.getData();
-		//tr.writeData(option.dir+"/"+option.dfile);
+		tr.getData();
+		tr.writeData(option.dir+"/"+option.dfile);
 		//tr.writeData("d.txt");
 		try {
-			if (args.length == 0){
-				showHelp(parser);
-				return;
-			}
-			
-			parser.parseArgument(args);
 			
 			if (option.est || option.estc){
 				Estimator estimator = new Estimator();
@@ -73,16 +67,12 @@ public class LDA {
 				}
 			}
 		}
-		catch (CmdLineException cle){
-			System.out.println("Command line error: " + cle.getMessage());
-			showHelp(parser);
-			return;
-		}
 		catch (Exception e){
 			System.out.println("Error in main: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
+		
 	}
 	
 	public static void showHelp(CmdLineParser parser){
