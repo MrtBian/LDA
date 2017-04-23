@@ -27,6 +27,7 @@
  */
 
 package jgibblda;
+
 import datapreprocess.Textread;
 
 import java.io.IOException;
@@ -35,49 +36,47 @@ import java.sql.SQLException;
 import org.kohsuke.args4j.*;
 
 public class LDA {
-	
-	public LDA() throws SQLException, IOException{
+
+	public LDA() throws SQLException, IOException {
 		LDACmdOption option = new LDACmdOption();
 		CmdLineParser parser = new CmdLineParser(option);
-		
-		//Data preprocess
+
+		// Data preprocess
 		Textread tr = new Textread();
 		tr.getData();
-		tr.writeData(option.dir+"/"+option.dfile);
-		//tr.writeData("d.txt");
+		tr.writeData(option.dir + "/" + option.dfile);
+		// tr.writeData("d.txt");
 		try {
-			
-			if (option.est || option.estc){
+
+			if (option.est || option.estc) {
 				Estimator estimator = new Estimator();
 				estimator.init(option);
 				estimator.estimate();
-			}
-			else if (option.inf){
+			} else if (option.inf) {
 				Inferencer inferencer = new Inferencer();
 				inferencer.init(option);
-				
+
 				Model newModel = inferencer.inference();
-			
-				for (int i = 0; i < newModel.phi.length; ++i){
-					//phi: K * V
-					System.out.println("-----------------------\ntopic" + i  + " : ");
-					for (int j = 0; j < 10; ++j){
+
+				for (int i = 0; i < newModel.phi.length; ++i) {
+					// phi: K * V
+					System.out.println("-----------------------\ntopic" + i + " : ");
+					for (int j = 0; j < 10; ++j) {
 						System.out.println(inferencer.globalDict.id2word.get(j) + "\t" + newModel.phi[i][j]);
 					}
 				}
 			}
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			System.out.println("Error in main: " + e.getMessage());
 			e.printStackTrace();
 			return;
 		}
-		
+
 	}
-	
-	public static void showHelp(CmdLineParser parser){
+
+	public static void showHelp(CmdLineParser parser) {
 		System.out.println("LDA [options ...] [arguments...]");
 		parser.printUsage(System.out);
 	}
-	
+
 }
