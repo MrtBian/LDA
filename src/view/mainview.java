@@ -117,7 +117,7 @@ public class mainview {
 		data_text.height = 30;
 		data_text.top = new FormAttachment(label, 30);
 		data_text.left = new FormAttachment(0, 80);
-		data_text.right = new FormAttachment(3, 5, 100);
+		data_text.right = new FormAttachment(5, 8, 100);
 		text.setLayoutData(data_text);
 		text.addMouseListener(new MouseListener() {
 
