@@ -11,6 +11,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -43,6 +44,7 @@ public class mainview {
 	private Text text;
 	private Button button;
 	private List list;
+	private int listnum = 100;
 
 	public Connection getConnection() {
 		try {
@@ -82,8 +84,10 @@ public class mainview {
 				if (rc) {
 					try {
 						MessageDialog.openInformation(shell, "LDA", "LDA is running ...\nWait a minute");
+						long start = System.currentTimeMillis();
 						LDA lda = new LDA();
-						MessageDialog.openInformation(shell, "LDA", "DONE!");
+						long end = System.currentTimeMillis();
+						MessageDialog.openInformation(shell, "LDA", "DONE!\nTime: " + (end - start) / 1000.0 + "s");
 					} catch (SQLException e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -124,7 +128,9 @@ public class mainview {
 			@Override
 			public void mouseDown(MouseEvent arg0) {
 				// TODO Auto-generated method stub
-				text.setText("");
+				if (text.getText().equals("please input what you want to search")) {
+					text.setText("");
+				}
 			}
 
 			@Override
@@ -169,6 +175,7 @@ public class mainview {
 					list.add("Please input what you want to search,separate by  blank space!");
 
 				} else {
+					long start = System.currentTimeMillis();
 					list.removeAll();
 					conn = getConnection();
 					try {
@@ -181,10 +188,16 @@ public class mainview {
 					recommend rec = new recommend(words);
 					System.out.println(words);
 					ArrayList<Map.Entry<Integer, Double>> pdoclist = rec.re_compute();
+					long end = System.currentTimeMillis();
+					list.add("Time: " + (end - start) / 1000.0 + "s");
+					list.add("SEARCH RESULT");
+					list.add("=================================================================="
+							+ "=================================================================="
+							+ "==================================================================");
 					if (pdoclist == null) {
 						list.add("Database do not have documents about this,please input again!");
 					} else {
-						for (int i = 0; i < pdoclist.size(); i++) {
+						for (int i = 0; i < listnum; i++) {
 							try {
 								String sql = "select * from document where id = " + pdoclist.get(i).getKey();
 								ResultSet rs = stat.executeQuery(sql);

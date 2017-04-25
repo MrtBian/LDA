@@ -24,12 +24,26 @@ public class recommend {
 	private ArrayList<String> words;// 搜索词汇
 	private ArrayList<Integer> wordid = new ArrayList<Integer>();// 搜索词汇对应的标号
 	private Map<String, Integer> wordmap = new HashMap<String, Integer>();// 所有词汇的标号
+	private Map<Integer, String> wmap = new HashMap<Integer, String>();
 	private double[][] t_w;
 	private double[][] d_t;
 	private Map<Integer, Double> pdoc = new HashMap<Integer, Double>();
 	private Map<Integer, Double> ptopic = new HashMap<Integer, Double>();
+	private Map<String, Integer> distance = new HashMap<String, Integer>();// 不在词典中的词与词典中的词的距离
+	// 计算推荐指数
 
 	public ArrayList<Map.Entry<Integer, Double>> re_compute() {
+		// 将词转化为标号
+		for (String s : words) {
+			s = s.toLowerCase();
+			if (wordmap.containsKey(s)) {
+				wordid.add(wordmap.get(s));
+			} else {// 进行模糊匹配（只匹配最相似的）
+				int t = least_dis(s);
+				// System.out.println(wmap.get(t));
+				wordid.add(t);
+			}
+		}
 		System.out.println(wordid);
 		System.out.println(nwords + " " + ntopics + " " + ndocs);
 		if (wordid.size() == 0)
@@ -92,7 +106,7 @@ public class recommend {
 			String tempString = null;
 			while ((tempString = reader.readLine()) != null) {
 				String[] str = tempString.split("=");
-				System.out.println(str[0]);
+				// System.out.println(str[0]);
 				if (str[0].equals("nwords"))
 					nwords = Integer.parseInt(str[1]);
 				else if (str[0].equals("ntopics"))
@@ -110,12 +124,10 @@ public class recommend {
 				wordmap.put(str[0], Integer.parseInt(str[1]));
 			}
 			reader.close();
+			// 得到wmap
+			for (Map.Entry<String, Integer> entry : wordmap.entrySet()) {
 
-			// 将词转化为标号
-			for (String s : words) {
-				if (wordmap.containsKey(s.toLowerCase())) {
-					wordid.add(wordmap.get(s.toLowerCase()));
-				}
+				wmap.put(entry.getValue(), entry.getKey());
 			}
 
 			t_w = new double[ntopics][nwords];
@@ -156,4 +168,69 @@ public class recommend {
 		}
 	}
 
+	public int least_dis(String str) {
+		for (Map.Entry<String, Integer> entry : wordmap.entrySet()) {
+			// System.out.println("key= " + entry.getKey() + " and value= " +
+			// entry.getValue());
+			String temp = entry.getKey();
+			distance.put(temp, compute_distance(str, temp));
+		}
+		ArrayList<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(distance.entrySet());
+		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
+			public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
+				if ((o2.getValue() - o1.getValue()) > 0)
+					return -1;
+				else if ((o2.getValue() - o1.getValue()) == 0)
+					return 0;
+				else
+					return 1;
+			}
+		});
+		System.out.println(list.get(0).getKey());
+		return wordmap.get(list.get(0).getKey());
+	}
+
+	public static int min(int a, int b, int c) {
+		if (a < b) {
+			if (a < c)
+				return a;
+			else
+				return c;
+		} else {
+			if (b < c)
+				return b;
+			else
+				return c;
+		}
+	}
+
+	public static int compute_distance(String strA, String strB) {
+		int a, b, c;
+		int lenA = strA.length();
+		int lenB = strB.length();
+		if (strA.length() == 0)
+			return lenB;
+		if (strB.length() == 0)
+			return lenA;
+		if (strA.charAt(0) == strB.charAt(0)) {
+			return compute_distance(strA.substring(1), strB.substring(1));
+		} else {
+			if (lenA > 8)
+				return lenA;
+			if (lenB > 8)
+				return lenB;
+			a = compute_distance(strA, strB.substring(1));
+			b = compute_distance(strA.substring(1), strB);
+			c = compute_distance(strA.substring(1), strB.substring(1));
+			return min(a, b, c) + 1;
+		}
+	}
+/*
+	public static void main(String[] args) {
+		String strA = "asdfghjjhjgjkl";
+		String strB = "sdfghsjklzkjhk";
+		System.out.println(recommend.compute_distance(strA, strB));
+
+	}
+*/
 }
