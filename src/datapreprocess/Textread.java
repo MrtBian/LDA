@@ -55,13 +55,25 @@ public class Textread {
 			// System.out.println(rs.getRow());
 			String temp = rs.getString("title") + " " + rs.getString("abstract") + " " + rs.getString("keywords");
 			// System.out.println(temp);
-			String[] strs = temp.split("[ +-_^&*#@<>/\\\\,;.?!:()0-9'\"“”~`{}]");
+			temp = temp.toLowerCase();
+			String[] strs = temp.split("[^a-z]");
+			// String[] strs = temp.split("[
+			// +-_&*#@<>/\\\\,;.?!:()0-9\"“”~`{}]");
 			ArrayList<String> tempArray = new ArrayList<String>();
 			for (String s : strs) {
-				s = s.toLowerCase();
-				if (!stopwords.contains(s) && s.length() > 1) {
-					tempArray.add(s);
+				// stemming过程
+				Stemmer stem = new Stemmer();
+				char[] c = s.toCharArray();
+				stem.add(c, c.length);
+				stem.stem();
+				String t = stem.toString();
+				if (!stopwords.contains(t) && t.length() > 1) {
+					tempArray.add(t);
 				}
+				/*
+				 * if (!stopwords.contains(s) && s.length() > 1) {
+				 * tempArray.add(s); }
+				 */
 			}
 			docs.add(tempArray);
 		}
@@ -98,17 +110,15 @@ public class Textread {
 			}
 		}
 	}
-/*
-	public static void main(String args[]) throws IOException, SQLException {
-		Textread textread = new Textread();
-		textread.getData();
-		ArrayList<ArrayList<String>> temp = textread.docs;
-			
-			int c=0,lc=0; for(ArrayList<String> arr:temp){ for(String s:arr){
-			c++; System.out.print(s+" "); } lc++; System.out.println(); }
-			System.out.println(c+" "+lc);
-			
-		textread.writeData("Data/data.txt");
-	}
-*/
+	/*
+	 * public static void main(String args[]) throws IOException, SQLException {
+	 * Textread textread = new Textread(); textread.getData();
+	 * ArrayList<ArrayList<String>> temp = textread.docs;
+	 * 
+	 * int c=0,lc=0; for(ArrayList<String> arr:temp){ for(String s:arr){ c++;
+	 * System.out.print(s+" "); } lc++; System.out.println(); }
+	 * System.out.println(c+" "+lc);
+	 * 
+	 * textread.writeData("Data/data.txt"); }
+	 */
 }
