@@ -197,10 +197,11 @@ public class mainview {
 						for (int i = 0; i < listnum; i++) {
 							arr.add(pdoclist.get(i).getKey());
 						}
+						int[] K = { 5, 10 };// 聚类的类别数目
 						ClusterMain cMain = new ClusterMain();
 						double[] en = null;
 						try {
-							en = cMain.Clustermain(arr);
+							en = cMain.Clustermain(arr, K);
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
