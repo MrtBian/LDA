@@ -10,11 +10,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.Vector;
 
-/**Kmeans聚类算法的实现类，将newsgroups文档集聚成10类、20类、30类
+/**Kmeans聚类算法的实现类
  * 算法结束条件:当每个点最近的聚类中心点就是它所属的聚类中心点时，算法结束
- * @author yangliu
- * @qq 772330184 
- * @mail yang.liu@pku.edu.cn
  *
  */
 

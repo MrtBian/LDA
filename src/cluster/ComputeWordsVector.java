@@ -15,9 +15,6 @@ import java.util.Iterator;
 import java.util.TreeSet;
 
 /**计算文档的属性向量，将所有文档向量化
- * @author yangliu
- * @qq 772330184 
- * @mail yang.liu@pku.edu.cn
  *
  */
 public class ComputeWordsVector {

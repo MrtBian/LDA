@@ -17,11 +17,10 @@ import org.eclipse.jface.contexts.IContextIds;
 
 /**
  * 聚类器主类，提供主函数入口
- * 
- * @author yangliu
- * @qq 772330184
- * @mail yang.liu@pku.edu.cn
- *
+ * 原代码作者杨柳
+ * 代码改动
+ * 1.聚类来源不再来源文件，而是来源与参数传递。格式为 Map<Integer, ArrayList<String>>
+ * 2.舍弃了预处理部分（传进来的数据已经处理过）
  */
 public class ClusterMain {
 
@@ -58,7 +57,8 @@ public class ClusterMain {
 	}
 
 	/**
-	 * @param args
+	 * @param ids 要聚类的文档id
+	 * @return 聚类的熵值
 	 * @throws IOException
 	 */
 	public double [] Clustermain(ArrayList<Integer> ids) throws IOException {
