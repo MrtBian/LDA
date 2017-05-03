@@ -13,11 +13,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Map;
 
 public class Textread {
 	DataConfig dataconfig = new DataConfig();
 	String dbpath = dataconfig.dbpath;
 	ArrayList<ArrayList<String>> docs;
+	Map<Integer,ArrayList<String>> docs1;
 	ArrayList<String> stopwords;
 	Connection conn;
 	Statement stat;
@@ -53,15 +55,14 @@ public class Textread {
 		ResultSet rs = stat.executeQuery(sql);
 		while (rs.next()) {
 			// System.out.println(rs.getRow());
+			int id = rs.getInt("id");
 			String temp = rs.getString("title") + " " + rs.getString("abstract") + " " + rs.getString("keywords");
 			// System.out.println(temp);
 			temp = temp.toLowerCase();
 			String[] strs = temp.split("[^a-z]");
-			// String[] strs = temp.split("[
-			// +-_&*#@<>/\\\\,;.?!:()0-9\"“”~`{}]");
 			ArrayList<String> tempArray = new ArrayList<String>();
 			for (String s : strs) {
-				// stemming过程
+				// stemming
 				Stemmer stem = new Stemmer();
 				char[] c = s.toCharArray();
 				stem.add(c, c.length);
@@ -76,6 +77,7 @@ public class Textread {
 				 */
 			}
 			docs.add(tempArray);
+			docs1.put(id,tempArray);
 		}
 		rs.close();
 		conn.close();

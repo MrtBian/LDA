@@ -27,6 +27,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
+import cluster.ClusterMain;
 import datapreprocess.DataConfig;
 import jgibblda.LDA;
 
@@ -44,7 +45,7 @@ public class mainview {
 	private Text text;
 	private Button button;
 	private List list;
-	private int listnum = 100;
+	private int listnum = 200;
 
 	public Connection getConnection() {
 		try {
@@ -188,15 +189,31 @@ public class mainview {
 					recommend rec = new recommend(words);
 					System.out.println(words);
 					ArrayList<Map.Entry<Integer, Double>> pdoclist = rec.re_compute();
-					long end = System.currentTimeMillis();
-					list.add("Time: " + (end - start) / 1000.0 + "s");
-					list.add("SEARCH RESULT");
-					list.add("=================================================================="
-							+ "=================================================================="
-							+ "==================================================================");
+
 					if (pdoclist == null) {
 						list.add("Database do not have documents about this,please input again!");
 					} else {
+						ArrayList<Integer> arr = new ArrayList<Integer>();
+						for (int i = 0; i < listnum; i++) {
+							arr.add(pdoclist.get(i).getKey());
+						}
+						ClusterMain cMain = new ClusterMain();
+						double[] en = null;
+						try {
+							en = cMain.Clustermain(arr);
+						} catch (IOException e1) {
+							// TODO Auto-generated catch block
+							e1.printStackTrace();
+						}
+						for (int i = 0; i < en.length; i++) {
+							list.add("The Entropy for this Cluster is " + en[i]);
+						}
+						long end = System.currentTimeMillis();
+						list.add("Time: " + (end - start) / 1000.0 + "s");
+						list.add("SEARCH RESULT");
+						list.add("=================================================================="
+								+ "=================================================================="
+								+ "==================================================================");
 						for (int i = 0; i < listnum; i++) {
 							try {
 								String sql = "select * from document where id = " + pdoclist.get(i).getKey();
