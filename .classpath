@@ -14,5 +14,10 @@
 	<classpathentry kind="lib" path="/usr/local/eclipse/plugins/org.eclipse.swt_3.105.2.v20161122-0613.jar"/>
 	<classpathentry kind="lib" path="/usr/local/eclipse/plugins/org.eclipse.ui.workbench_3.108.2.v20161025-2029.jar"/>
 	<classpathentry kind="lib" path="/home/wing/workspace/DataMiningCluster/Jama-1.0.2.jar"/>
+	<classpathentry kind="lib" path="/home/wing/lucene-6.5.1/analysis/common/lucene-analyzers-common-6.5.1.jar"/>
+	<classpathentry kind="lib" path="/home/wing/lucene-6.5.1/core/lucene-core-6.5.1.jar"/>
+	<classpathentry kind="lib" path="/home/wing/lucene-6.5.1/highlighter/lucene-highlighter-6.5.1.jar"/>
+	<classpathentry kind="lib" path="/home/wing/lucene-6.5.1/queries/lucene-queries-6.5.1.jar"/>
+	<classpathentry kind="lib" path="/home/wing/lucene-6.5.1/queryparser/lucene-queryparser-6.5.1.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
