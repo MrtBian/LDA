@@ -9,7 +9,9 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.DoubleToLongFunction;
 
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.text.source.ILineDiffer;
 import org.eclipse.swt.SWT;
@@ -30,6 +32,7 @@ import org.eclipse.swt.widgets.*;
 import cluster.ClusterMain;
 import datapreprocess.DataConfig;
 import jgibblda.LDA;
+import lucenesearch.lucenese;
 
 public class mainview {
 
@@ -45,7 +48,7 @@ public class mainview {
 	private Text text;
 	private Button button;
 	private List list;
-	private int listnum = 200;
+	int listnum = 30;
 
 	public Connection getConnection() {
 		try {
@@ -164,7 +167,7 @@ public class mainview {
 				// TODO Auto-generated method stub
 
 				String tempstring = text.getText();
-				String[] strings = tempstring.split(" ");
+				String[] strings = tempstring.split("[^a-zA-Z]");
 				ArrayList<String> words = new ArrayList<String>();
 				for (String s : strings) {
 					if (s.length() > 0)
@@ -186,28 +189,51 @@ public class mainview {
 						e1.printStackTrace();
 					}
 					System.out.println("recommend");
+					// LDA search
 					recommend rec = new recommend(words);
 					System.out.println(words);
 					ArrayList<Map.Entry<Integer, Double>> pdoclist = rec.re_compute();
+					// lucene search
+					ArrayList<Integer> Lucenearr = null;
+					try {
 
+						lucenese luse = new lucenese(listnum);
+						luse.getDocs("d.txt");
+						luse.createindex("index");
+						Lucenearr = luse.search(words);
+						if (Lucenearr == null)
+							System.out.println("err");
+						luse.closedirectory();
+					} catch (IOException e2) {
+						// TODO Auto-generated catch block
+						e2.printStackTrace();
+					} catch (ParseException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					// 如果返回为0
 					if (pdoclist == null) {
 						list.add("Database do not have documents about this,please input again!");
 					} else {
-						ArrayList<Integer> arr = new ArrayList<Integer>();
+						ArrayList<Integer> LDAarr = new ArrayList<Integer>();
 						for (int i = 0; i < listnum; i++) {
-							arr.add(pdoclist.get(i).getKey());
+							LDAarr.add(pdoclist.get(i).getKey());
 						}
-						int[] K = { 5, 10 };// 聚类的类别数目
+						int[] K = { 15, 11, 9, 7, 5, 3, };// 聚类的类别数目
 						ClusterMain cMain = new ClusterMain();
-						double[] en = null;
+						double[] LDA = null;
+						double[] Lucene = null;
 						try {
-							en = cMain.Clustermain(arr, K);
+							LDA = cMain.Clustermain(LDAarr, K);
+							Lucene = cMain.Clustermain(Lucenearr, K);
 						} catch (IOException e1) {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						for (int i = 0; i < en.length; i++) {
-							list.add("The Entropy for this Cluster is " + en[i]);
+						for (int i = 0; i < LDA.length; i++) {
+							list.add("K : \t" + K[i]);
+							list.add("LDA : \t" + LDA[i]);
+							list.add("Lucene : \t" + Lucene[i]);
 						}
 						long end = System.currentTimeMillis();
 						list.add("Time: " + (end - start) / 1000.0 + "s");

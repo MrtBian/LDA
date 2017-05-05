@@ -46,7 +46,7 @@ public class KmeansCluster {
 		Vector<Integer> mem = new Vector<Integer>();
 		int iterNum = 0;// 迭代次数
 		while (true) {
-			System.out.println("Iteration No." + (iterNum++) + "----------------------");
+			//System.out.println("Iteration No." + (iterNum++) + "----------------------");
 			// 3、计算每个点和每个聚类中心的距离
 			for (int i = 0; i < tsLength; i++) {
 				for (int j = 0; j < K; j++) {
@@ -67,6 +67,8 @@ public class KmeansCluster {
 			System.out.println("okCount = " + okCount);
 			if (okCount == tsLength || iterNum >= 10)
 				break;
+			/*if(iterNum >= 5)
+				break;*/
 			// 6、如果前面条件不满足，那么需要重新聚类再进行一次迭代，需要修改每个聚类的成员和每个点属于的聚类信息
 			clusterMember.clear();
 			for (int i = 0; i < tsLength; i++) {
@@ -91,6 +93,7 @@ public class KmeansCluster {
 				tempMean.putAll(newMean);
 				meansMap.put(i, tempMean);
 			}
+			iterNum++;
 		}
 		// 8、形成聚类结果并且返回
 		Map<Integer, Integer> resMap = new TreeMap<Integer, Integer>();
@@ -227,7 +230,7 @@ public class KmeansCluster {
 			Map.Entry<Integer, Map<String, Double>> me = it.next();
 			if (count == i * allTestSampleMapSet.size() / K) {
 				meansMap.put(i, me.getValue());
-				System.out.println(me.getKey() + " map size is " + me.getValue().size());
+				//System.out.println(me.getKey() + " map size is " + me.getValue().size());
 				i++;
 			}
 			count++;
@@ -256,18 +259,27 @@ public class KmeansCluster {
 		resWriter.flush();
 		resWriter.close();
 	}
-
+	/**
+	 * 
+	 * @param KmeansClusterResult 聚类结果
+	 * @return 聚类评价指标
+	 */
+	private double evaluate(Map<Integer, Integer> KmeansClusterResult) {
+		//to do
+		return 0.0;
+	}
+	
 	public double[] KmeansClusterMain(Map<Integer, ArrayList<String>> docs, int[] k2) throws IOException {
 		// 首先计算文档TF-IDF向量，保存为Map<String,Map<String,Double>>
 		// 即为Map<文件名，Map<特征词，TF-IDF值>>
 		ComputeWordsVector computeV = new ComputeWordsVector();
 		// int[] K = {5,10};
 		int[] K = k2;
-		double[] Entropy = { 0.0, 0.0 };
+		double[] Entropy = new double[k2.length];
 		Map<Integer, Map<String, Double>> allTestSampleMap = computeV.computeTFMultiIDF(docs);
 		for (int i = 0; i < K.length; i++) {
 			System.out.println("开始聚类，聚成" + K[i] + "类");
-			String KmeansClusterResultFile = "/home/wing/KmeansClusterResult/";
+			String KmeansClusterResultFile = "KmeansClusterResult/";
 			Map<Integer, Integer> KmeansClusterResult = new TreeMap<Integer, Integer>();
 			KmeansClusterResult = doProcess(allTestSampleMap, K[i]);
 			KmeansClusterResultFile += K[i];

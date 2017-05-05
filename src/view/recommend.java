@@ -1,5 +1,4 @@
 package view;
-
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -30,8 +29,14 @@ public class recommend {
 	private Map<Integer, Double> pdoc = new HashMap<Integer, Double>();
 	private Map<Integer, Double> ptopic = new HashMap<Integer, Double>();
 	private Map<String, Integer> distance = new HashMap<String, Integer>();// 不在词典中的词与词典中的词的距离
-	// 计算推荐指数
+	// private Map<String, Double> similaity = new HashMap<String, Double>();//
+	// 不在词典中的词与词典中的词的相似度
 
+	/**
+	 * 计算推荐指数
+	 * 
+	 * @return 推荐指数
+	 */
 	public ArrayList<Map.Entry<Integer, Double>> re_compute() {
 		// 将词转化为标号
 		for (String s : words) {
@@ -168,25 +173,51 @@ public class recommend {
 		}
 	}
 
+	/**
+	 * 
+	 * @param str
+	 * @return 与输入str最相似的词
+	 */
 	public int least_dis(String str) {
 		for (Map.Entry<String, Integer> entry : wordmap.entrySet()) {
 			// System.out.println("key= " + entry.getKey() + " and value= " +
 			// entry.getValue());
 			String temp = entry.getKey();
-			distance.put(temp, compute_distance(str, temp));
+			int dis = compute_distance(str, temp);
+			distance.put(temp, dis);
+			// System.out.println(dis);
+			// similaity.put(temp, 1-(double) dis/(temp.length()+str.length()));
 		}
+
+		System.setProperty("java.util.Arrays.useLegacyMergeSort", "true");
 		ArrayList<Map.Entry<String, Integer>> list = new ArrayList<Map.Entry<String, Integer>>(distance.entrySet());
 		Collections.sort(list, new Comparator<Map.Entry<String, Integer>>() {
 			public int compare(Entry<String, Integer> o1, Entry<String, Integer> o2) {
 				if ((o2.getValue() - o1.getValue()) > 0)
 					return -1;
 				else if ((o2.getValue() - o1.getValue()) == 0)
-					return 0;
+					if (o1.getKey().length() - o2.getKey().length() > 0) {
+						return 1;
+					} else if(o1.getKey().length() - o2.getKey().length() > 0) {
+						return -1;
+					}
+					else{
+						return 0;
+					}
 				else
 					return 1;
 			}
 		});
-		System.out.println(list.get(0).getKey());
+		/*
+		 * ArrayList<Map.Entry<String, Double>> list = new
+		 * ArrayList<Map.Entry<String, Double>>(similaity.entrySet());
+		 * Collections.sort(list, new Comparator<Map.Entry<String, Double>>() {
+		 * public int compare(Entry<String, Double> o1, Entry<String, Double>
+		 * o2) { if ((o2.getValue() - o1.getValue()) > 0) return 1; else if
+		 * ((o2.getValue() - o1.getValue()) == 0) return 0; else return -1; }
+		 * });
+		 */
+		System.out.println("&" + str + " " + list.get(0).getKey() + " " + list.get(0).getValue());
 		return wordmap.get(list.get(0).getKey());
 	}
 
@@ -204,6 +235,13 @@ public class recommend {
 		}
 	}
 
+	/**
+	 * 计算字符串的距离
+	 * 
+	 * @param strA
+	 * @param strB
+	 * @return A B的距离
+	 */
 	public static int compute_distance(String strA, String strB) {
 		int a, b, c;
 		int lenA = strA.length();
@@ -225,12 +263,11 @@ public class recommend {
 			return min(a, b, c) + 1;
 		}
 	}
-/*
-	public static void main(String[] args) {
-		String strA = "asdfghjjhjgjkl";
-		String strB = "sdfghsjklzkjhk";
-		System.out.println(recommend.compute_distance(strA, strB));
-
-	}
-*/
+	/*
+	 * public static void main(String[] args) { String strA = "asdfghjjhjgjkl";
+	 * String strB = "sdfghsjklzkjhk";
+	 * System.out.println(recommend.compute_distance(strA, strB));
+	 * 
+	 * }
+	 */
 }

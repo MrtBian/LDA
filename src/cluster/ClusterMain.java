@@ -25,6 +25,7 @@ public class ClusterMain {
 	ArrayList<Integer> ids = new ArrayList<Integer>();// 要聚类的文档标号。
 
 	public void getDocs(String datapath) {
+		docs.clear();
 		File file = new File(datapath);
 		BufferedReader reader = null;
 		try {
@@ -76,6 +77,7 @@ public class ClusterMain {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String beginTime = sdf.format(new java.util.Date());
 		System.out.println("程序开始执行时间:" + beginTime);
+		System.out.println("文档数:" + docs.size() + "\n聚类文档数："+docs1.size());
 		// String[] terms = computeV.createTestSamples(srcDir, destDir);
 		// kmeansCluster1.KmeansClusterMain(destDir, terms);
 		double[] en = kmeansCluster2.KmeansClusterMain(docs1, k);
