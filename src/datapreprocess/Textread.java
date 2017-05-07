@@ -1,10 +1,8 @@
 package datapreprocess;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.sql.Connection;
@@ -13,13 +11,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
 public class Textread {
 	DataConfig dataconfig = new DataConfig();
 	String dbpath = dataconfig.dbpath;
 	ArrayList<ArrayList<String>> docs;
-	Map<Integer,ArrayList<String>> docs1;
+	Map<Integer, ArrayList<String>> docs1;
 	ArrayList<String> stopwords;
 	Connection conn;
 	Statement stat;
@@ -28,6 +27,7 @@ public class Textread {
 		Stopwords sw = new Stopwords();
 		stopwords = sw.stopWords;
 		docs = new ArrayList<ArrayList<String>>();
+		docs1 = new HashMap<Integer, ArrayList<String>>();
 		conn = getConnection();
 	}
 
@@ -62,22 +62,20 @@ public class Textread {
 			String[] strs = temp.split("[^a-z]");
 			ArrayList<String> tempArray = new ArrayList<String>();
 			for (String s : strs) {
-				// stemming
-				Stemmer stem = new Stemmer();
-				char[] c = s.toCharArray();
-				stem.add(c, c.length);
-				stem.stem();
-				String t = stem.toString();
-				if (!stopwords.contains(t) && t.length() > 1) {
-					tempArray.add(t);
-				}
 				/*
-				 * if (!stopwords.contains(s) && s.length() > 1) {
-				 * tempArray.add(s); }
+				 * Stemmer stem = new Stemmer(); char[] c = s.toCharArray();
+				 * stem.add(c, c.length); stem.stem(); String t =
+				 * stem.toString(); if (!stopwords.contains(t) && t.length() >
+				 * 1) { tempArray.add(t); }
 				 */
+
+				if (!stopwords.contains(s) && s.length() > 1) {
+					tempArray.add(s);
+				}
+
 			}
 			docs.add(tempArray);
-			docs1.put(id,tempArray);
+			docs1.put(id, tempArray);
 		}
 		rs.close();
 		conn.close();
