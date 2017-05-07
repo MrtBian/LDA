@@ -1,4 +1,5 @@
 package view;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -14,6 +15,8 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+
+import org.eclipse.swt.events.ExpandAdapter;
 
 import jgibblda.LDACmdOption;
 
@@ -39,6 +42,7 @@ public class recommend {
 	 */
 	public ArrayList<Map.Entry<Integer, Double>> re_compute() {
 		// 将词转化为标号
+
 		for (String s : words) {
 			s = s.toLowerCase();
 			if (wordmap.containsKey(s)) {
@@ -54,9 +58,9 @@ public class recommend {
 		if (wordid.size() == 0)
 			return null;
 		for (int i = 0; i < ntopics; i++) {
-			double temp = 0.0;
+			double temp = 1.0;
 			for (int t : wordid) {
-				temp += t_w[i][t];
+				temp = temp*t_w[i][t];
 			}
 			ptopic.put(i, temp);
 		}
@@ -198,10 +202,9 @@ public class recommend {
 				else if ((o2.getValue() - o1.getValue()) == 0)
 					if (o1.getKey().length() - o2.getKey().length() > 0) {
 						return 1;
-					} else if(o1.getKey().length() - o2.getKey().length() > 0) {
+					} else if (o1.getKey().length() - o2.getKey().length() < 0) {
 						return -1;
-					}
-					else{
+					} else {
 						return 0;
 					}
 				else

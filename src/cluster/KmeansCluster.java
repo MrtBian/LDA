@@ -16,6 +16,11 @@ import java.util.Vector;
  */
 
 public class KmeansCluster {
+	Map<Integer, Map<String, Double>> allTestSampleMap;
+	Map<Integer, Integer> KmeansClusterResult = new TreeMap<Integer, Integer>();
+	Map<Integer, Map<String, Double>> meansMap;// K个中心点
+	Integer[] testSampleNames;
+	Map<Integer, Vector<Integer>> clusterMember = new TreeMap<Integer, Vector<Integer>>();// 记录每个聚类的成员点序号
 
 	/**
 	 * Kmeans算法主过程
@@ -29,8 +34,8 @@ public class KmeansCluster {
 	 */
 	private Map<Integer, Integer> doProcess(Map<Integer, Map<String, Double>> allTestSampleMap, int K) {
 		// TODO Auto-generated method stub
-		// 0、首先获取allTestSampleMap所有文件名顺序组成的数组
-		Integer[] testSampleNames = new Integer[allTestSampleMap.size()];
+		// 0、首先获取allTestSampleMap所有文件ID顺序组成的数组
+		testSampleNames = new Integer[allTestSampleMap.size()];
 		int count = 0, tsLength = allTestSampleMap.size();
 		Set<Entry<Integer, Map<String, Double>>> allTestSampeleMapSet = allTestSampleMap.entrySet();
 		for (Iterator<Entry<Integer, Map<String, Double>>> it = allTestSampeleMapSet.iterator(); it.hasNext();) {
@@ -38,15 +43,16 @@ public class KmeansCluster {
 			testSampleNames[count++] = me.getKey();
 		}
 		// 1、初始点的选择算法是随机选择或者是均匀分开选择，这里采用后者
-		Map<Integer, Map<String, Double>> meansMap = getInitPoint(allTestSampleMap, K);// 保存K个中心点
+		meansMap = getInitPoint(allTestSampleMap, K);// 保存K个中心点
 		double[][] distance = new double[tsLength][K];// distance[i][j]记录点i到聚类中心j的距离
 		// 2、初始化K个聚类
 		int[] assignMeans = new int[tsLength];// 记录所有点属于的聚类序号，初始化全部为0
-		Map<Integer, Vector<Integer>> clusterMember = new TreeMap<Integer, Vector<Integer>>();// 记录每个聚类的成员点序号
+
 		Vector<Integer> mem = new Vector<Integer>();
 		int iterNum = 0;// 迭代次数
 		while (true) {
-			//System.out.println("Iteration No." + (iterNum++) + "----------------------");
+			// System.out.println("Iteration No." + (iterNum++) +
+			// "----------------------");
 			// 3、计算每个点和每个聚类中心的距离
 			for (int i = 0; i < tsLength; i++) {
 				for (int j = 0; j < K; j++) {
@@ -64,11 +70,12 @@ public class KmeansCluster {
 				if (nearestMeans[i] == assignMeans[i])
 					okCount++;
 			}
-			System.out.println("okCount = " + okCount);
+			// System.out.println("okCount = " + okCount);
 			if (okCount == tsLength || iterNum >= 10)
 				break;
-			/*if(iterNum >= 5)
-				break;*/
+			/*
+			 * if(iterNum >= 5) break;
+			 */
 			// 6、如果前面条件不满足，那么需要重新聚类再进行一次迭代，需要修改每个聚类的成员和每个点属于的聚类信息
 			clusterMember.clear();
 			for (int i = 0; i < tsLength; i++) {
@@ -224,13 +231,14 @@ public class KmeansCluster {
 		// TODO Auto-generated method stub
 		int count = 0, i = 0;
 		Map<Integer, Map<String, Double>> meansMap = new TreeMap<Integer, Map<String, Double>>();// 保存K个聚类中心点向量
-		System.out.println("本次聚类的初始点对应的文件为：");
+		// System.out.println("本次聚类的初始点对应的文件为：");
 		Set<Entry<Integer, Map<String, Double>>> allTestSampleMapSet = allTestSampleMap.entrySet();
 		for (Iterator<Entry<Integer, Map<String, Double>>> it = allTestSampleMapSet.iterator(); it.hasNext();) {
 			Map.Entry<Integer, Map<String, Double>> me = it.next();
 			if (count == i * allTestSampleMapSet.size() / K) {
 				meansMap.put(i, me.getValue());
-				//System.out.println(me.getKey() + " map size is " + me.getValue().size());
+				// System.out.println(me.getKey() + " map size is " +
+				// me.getValue().size());
 				i++;
 			}
 			count++;
@@ -259,33 +267,170 @@ public class KmeansCluster {
 		resWriter.flush();
 		resWriter.close();
 	}
+
+	/**
+	 * 计算类别C的类内平均距离
+	 * 
+	 * @param c
+	 *            类
+	 * @return 类内平均距离
+	 */
+	private double avg(int c) {
+		int num = clusterMember.get(c).size();
+		double sumdist = 0.0;
+		Vector<Integer> vector = clusterMember.get(c);
+		
+		for (int i = 0; i < num; i++) {
+			for (int j = i + 1; j < num; j++) {
+				sumdist += getDistance(allTestSampleMap.get(testSampleNames[vector.get(i)]),
+						allTestSampleMap.get(testSampleNames[vector.get(j)]));
+			}
+		}
+		return sumdist * 2 / ((num - 1) * num);
+	}
+
+	/**
+	 * 计算类内最大距离
+	 * 
+	 * @param c
+	 * @return
+	 */
+	private double diam(int c) {
+		int num = clusterMember.get(c).size();
+		double maxdist = 0.0;
+		Vector<Integer> vector = clusterMember.get(c);
+		if (vector == null)// 空聚类
+			return 0.0;
+		for (int i = 0; i < num; i++) {
+			for (int j = i + 1; j < num; j++) {
+				double temp = getDistance(allTestSampleMap.get(testSampleNames[vector.get(i)]),
+						allTestSampleMap.get(testSampleNames[vector.get(j)]));
+				if (temp > maxdist)
+					maxdist = temp;
+			}
+		}
+		return maxdist;
+	}
+
+	/**
+	 * 计算两类间最近的距离
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @return
+	 */
+	private double dmin(int c1, int c2) {
+		int num1 = clusterMember.get(c1).size();
+		int num2 = clusterMember.get(c2).size();
+		double mindist = 10000.0;
+		Vector<Integer> vector1 = clusterMember.get(c1);
+		Vector<Integer> vector2 = clusterMember.get(c2);
+
+		for (int i = 0; i < num1; i++) {
+			for (int j = 0; j < num2; j++) {
+				double temp = getDistance(allTestSampleMap.get(testSampleNames[vector1.get(i)]),
+						allTestSampleMap.get(testSampleNames[vector2.get(j)]));
+				if (temp < mindist)
+					mindist = temp;
+			}
+		}
+		return mindist;
+	}
+
+	/**
+	 * 计算两个类的中心距离
+	 * 
+	 * @param c1
+	 * @param c2
+	 * @return c1和c2的中心之间的距离
+	 */
+	private double dcen(int c1, int c2) {
+		return getDistance(meansMap.get(c1), meansMap.get(c2));
+	}
+	/**
+	 * 计算DI
+	 * @return
+	 */
+	private double evaluateDI() {
+		int K = clusterMember.size();// num of class
+		double maxdiam = 0.0;
+		for (int i = 0; i < K; i++) {
+			double diam = diam(i);
+			if (diam > maxdiam)
+				maxdiam = diam;
+		}
+		double min = 10000.0;
+		for (int i = 0; i < K; i++) {
+			double min1 = 10000.0;
+			for (int j = 0; j < K; j++) {
+				if (j == i)
+					continue;
+				double temp = dmin(i, j) / maxdiam;
+				if (temp < min1)
+					min1 = temp;
+			}
+			if (min1 < min)
+				min = min1;
+		}
+		return min;
+	}
+
 	/**
 	 * 
-	 * @param KmeansClusterResult 聚类结果
-	 * @return 聚类评价指标
+	 * @return 聚类评价指标DBI
 	 */
-	private double evaluate(Map<Integer, Integer> KmeansClusterResult) {
-		//to do
-		return 0.0;
+	private double evaluateDBI() {
+		int K = clusterMember.size();// num of class
+		for (int i = 0; i < K; i++) {
+			if (!clusterMember.containsKey(i)) {// 注意kmeans可能产生空聚类
+				continue;
+			}
+			Map<String, Double> newMean = computeNewMean(clusterMember.get(i), allTestSampleMap, testSampleNames);
+			Map<String, Double> tempMean = new TreeMap<String, Double>();
+			tempMean.putAll(newMean);
+			meansMap.put(i, tempMean);
+		}
+		double sum = 0.0;
+		for (int i = 0; i < K; i++) {
+			double max = 0.0;
+			for (int j = 0; j < K; j++) {
+				if (j == i)
+					continue;
+				double temp = (avg(i) + avg(j)) / dcen(i, j);
+				if (temp > max)
+					max = temp;
+			}
+			sum += max;
+		}
+		//System.out.println(sum);
+		return sum / K;
 	}
-	
-	public double[] KmeansClusterMain(Map<Integer, ArrayList<String>> docs, int[] k2) throws IOException {
+
+	public double[][] KmeansClusterMain(Map<Integer, ArrayList<String>> docs, int[] k2) throws IOException {
 		// 首先计算文档TF-IDF向量，保存为Map<String,Map<String,Double>>
 		// 即为Map<文件名，Map<特征词，TF-IDF值>>
 		ComputeWordsVector computeV = new ComputeWordsVector();
 		// int[] K = {5,10};
 		int[] K = k2;
-		double[] Entropy = new double[k2.length];
-		Map<Integer, Map<String, Double>> allTestSampleMap = computeV.computeTFMultiIDF(docs);
+		double[][] Entropy = new double[2][k2.length];
+		allTestSampleMap = computeV.computeTFMultiIDF(docs);
+		System.out.println(allTestSampleMap.size());
 		for (int i = 0; i < K.length; i++) {
-			System.out.println("开始聚类，聚成" + K[i] + "类");
-			String KmeansClusterResultFile = "KmeansClusterResult/";
-			Map<Integer, Integer> KmeansClusterResult = new TreeMap<Integer, Integer>();
+			System.out.print("开始聚类，聚成" + K[i] + "类.");
+			// String KmeansClusterResultFile = "KmeansClusterResult/";
+			// Map<Integer, Integer> KmeansClusterResult = new TreeMap<Integer,
+			// Integer>();
 			KmeansClusterResult = doProcess(allTestSampleMap, K[i]);
-			KmeansClusterResultFile += K[i];
-			printClusterResult(KmeansClusterResult, KmeansClusterResultFile);
-			Entropy[i] = computeV.evaluateClusterRes(KmeansClusterResultFile, K[i]);
-			System.out.println("The Entropy for this Cluster is " + Entropy[i]);
+			// KmeansClusterResultFile += K[i];
+			// printClusterResult(KmeansClusterResult, KmeansClusterResultFile);
+			// Entropy[i] = computeV.evaluateClusterRes(KmeansClusterResultFile,
+			// K[i]);
+			Entropy[0][i] = evaluateDBI();
+			Entropy[1][i] = evaluateDI();
+			// System.out.println("The Entropy for this Cluster is " +
+			// Entropy[i]);
+			System.out.print("DBI=" + evaluateDBI());
+			System.out.println(" DI=" + evaluateDI());
 		}
 		return Entropy;
 	}

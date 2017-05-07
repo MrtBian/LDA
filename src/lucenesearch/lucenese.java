@@ -100,7 +100,7 @@ public class lucenese {
 		for (int i = 0; i < len; i++) {
 			Term term = new Term("context", words.get(i));
 			Query que = new FuzzyQuery(term);
-			builder.add(que, Occur.MUST);
+			builder.add(que, Occur.SHOULD);
 
 		}
 		BooleanQuery query = builder.build();

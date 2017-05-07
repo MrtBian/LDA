@@ -32,12 +32,15 @@ import org.eclipse.swt.widgets.*;
 import cluster.ClusterMain;
 import datapreprocess.DataConfig;
 import jgibblda.LDA;
+import jgibblda.LDACmdOption;
 import lucenesearch.lucenese;
 
 public class mainview {
 
 	DataConfig dataconfig = new DataConfig();
+	LDACmdOption option = new LDACmdOption();
 	String dbpath = dataconfig.dbpath;
+	String docspath = option.dir + "/" + option.dfile;
 	Connection conn;
 	Statement stat;
 	private Display display;
@@ -48,7 +51,7 @@ public class mainview {
 	private Text text;
 	private Button button;
 	private List list;
-	int listnum = 30;
+	int listnum = 100;
 
 	public Connection getConnection() {
 		try {
@@ -191,7 +194,7 @@ public class mainview {
 					System.out.println("recommend");
 					// LDA search
 					recommend rec = new recommend(words);
-					System.out.println(words);
+					//System.out.println(words);
 					ArrayList<Map.Entry<Integer, Double>> pdoclist = rec.re_compute();
 					// lucene search
 					ArrayList<Integer> Lucenearr = null;
@@ -203,6 +206,7 @@ public class mainview {
 						Lucenearr = luse.search(words);
 						if (Lucenearr == null)
 							System.out.println("err");
+						// System.out.println(Lucenearr.size());
 						luse.closedirectory();
 					} catch (IOException e2) {
 						// TODO Auto-generated catch block
@@ -217,12 +221,15 @@ public class mainview {
 					} else {
 						ArrayList<Integer> LDAarr = new ArrayList<Integer>();
 						for (int i = 0; i < listnum; i++) {
+							if(i<5){
+								System.out.println(pdoclist.get(i).getValue());
+							}
 							LDAarr.add(pdoclist.get(i).getKey());
 						}
-						int[] K = { 15, 11, 9, 7, 5, 3, };// 聚类的类别数目
-						ClusterMain cMain = new ClusterMain();
-						double[] LDA = null;
-						double[] Lucene = null;
+						int[] K = { 30, 20, 15, 11, 9, 7, 5, 3, 2 };// 聚类的类别数目
+						ClusterMain cMain = new ClusterMain(docspath);
+						double[][] LDA = null;
+						double[][] Lucene = null;
 						try {
 							LDA = cMain.Clustermain(LDAarr, K);
 							Lucene = cMain.Clustermain(Lucenearr, K);
@@ -230,10 +237,10 @@ public class mainview {
 							// TODO Auto-generated catch block
 							e1.printStackTrace();
 						}
-						for (int i = 0; i < LDA.length; i++) {
+						for (int i = 0; i < K.length; i++) {
 							list.add("K : \t" + K[i]);
-							list.add("LDA : \t" + LDA[i]);
-							list.add("Lucene : \t" + Lucene[i]);
+							list.add("LDA : \t" + LDA[0][i] + " " + LDA[1][i]);
+							list.add("Lucene : \t" + Lucene[0][i] + " " + Lucene[1][i]);
 						}
 						long end = System.currentTimeMillis();
 						list.add("Time: " + (end - start) / 1000.0 + "s");

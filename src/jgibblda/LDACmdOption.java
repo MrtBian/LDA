@@ -29,16 +29,16 @@ public class LDACmdOption {
 	public double beta = 0.1;
 
 	@Option(name = "-ntopics", usage = "Specify the number of topics")
-	public int K = 10;
+	public int K = 5;
 
 	@Option(name = "-niters", usage = "Specify the number of iterations")
-	public int niters = 200;
+	public int niters = 300;
 
 	@Option(name = "-savestep", usage = "Specify the number of steps to save the model since the last save")
 	public int savestep = 100;
 
 	@Option(name = "-twords", usage = "Specify the number of most likely words to be printed for each topic")
-	public int twords = 10;
+	public int twords = 5;
 
 	@Option(name = "-withrawdata", usage = "Specify whether we include raw data in the input")
 	public boolean withrawdata = false;

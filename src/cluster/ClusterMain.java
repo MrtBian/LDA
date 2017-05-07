@@ -15,14 +15,21 @@ import java.util.Map;
 
 import org.eclipse.jface.contexts.IContextIds;
 
+import jgibblda.LDACmdOption;
+
 /**
  * 聚类器主类，提供主函数入口 原代码作者杨柳 代码改动 1.聚类来源不再来源文件，而是来源与参数传递。格式为 Map<Integer,
  * ArrayList<String>> 2.舍弃了预处理部分（传进来的数据已经处理过）
  */
 public class ClusterMain {
-
+	String docspath;
 	Map<Integer, ArrayList<String>> docs = new HashMap<Integer, ArrayList<String>>();
 	ArrayList<Integer> ids = new ArrayList<Integer>();// 要聚类的文档标号。
+
+	public ClusterMain(String docspath) {
+		// TODO Auto-generated constructor stub
+		this.docspath = docspath;
+	}
 
 	public void getDocs(String datapath) {
 		docs.clear();
@@ -62,11 +69,12 @@ public class ClusterMain {
 	 * @return 聚类的熵值
 	 * @throws IOException
 	 */
-	public double[] Clustermain(ArrayList<Integer> ids, int[] k) throws IOException {
+	public double[][] Clustermain(ArrayList<Integer> ids, int[] k) throws IOException {
 		// TODO Auto-generated method stub
 		// ClusterMain cMain = new ClusterMain();
-		getDocs("d.txt");
+		getDocs(docspath);
 		this.ids = ids;
+		
 		Map<Integer, ArrayList<String>> docs1 = new HashMap<Integer, ArrayList<String>>();
 		for (Map.Entry<Integer, ArrayList<String>> entry : docs.entrySet()) {
 			if (ids.contains(entry.getKey())) {
@@ -80,7 +88,7 @@ public class ClusterMain {
 		System.out.println("文档数:" + docs.size() + "\n聚类文档数："+docs1.size());
 		// String[] terms = computeV.createTestSamples(srcDir, destDir);
 		// kmeansCluster1.KmeansClusterMain(destDir, terms);
-		double[] en = kmeansCluster2.KmeansClusterMain(docs1, k);
+		double[][] en = kmeansCluster2.KmeansClusterMain(docs1, k);
 		String endTime = sdf.format(new java.util.Date());
 		System.out.println("程序结束执行时间:" + endTime);
 		return en;

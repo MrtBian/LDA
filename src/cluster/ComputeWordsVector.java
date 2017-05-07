@@ -294,7 +294,7 @@ public class ComputeWordsVector {
 		// System.out.println();
 		for (int i = 0; i < K; i++) {
 			// System.out.print(i + " ");
-			for (int j = 0; j < 20; j++) {
+			for (int j = 0; j < docnum; j++) {
 				clusterSum[i] += confusionMatrix[i][j];
 				// System.out.print(confusionMatrix[i][j]+" ");
 			}
@@ -303,7 +303,7 @@ public class ComputeWordsVector {
 		// System.out.println();
 		for (int i = 0; i < K; i++) {
 			if (clusterSum[i] != 0) {
-				for (int j = 0; j < 20; j++) {
+				for (int j = 0; j < docnum; j++) {
 					double p = (double) confusionMatrix[i][j] / clusterSum[i];
 					if (p != 0) {
 						everyClusterEntropy[i] += -p * Math.log(p);
