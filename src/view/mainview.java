@@ -51,7 +51,8 @@ public class mainview {
 	private Text text;
 	private Button button;
 	private List list;
-	int listnum = 100;
+	int listnum = 500;
+	int[] K = { 90, 50, 20, 10, 8, 5, 4, 3, 2 };// 聚类的类别数目
 
 	public Connection getConnection() {
 		try {
@@ -226,7 +227,7 @@ public class mainview {
 							}
 							LDAarr.add(pdoclist.get(i).getKey());
 						}
-						int[] K = { 30, 20, 15, 11, 9, 7, 5, 3, 2 };// 聚类的类别数目
+						
 						ClusterMain cMain = new ClusterMain(docspath);
 						double[][] LDA = null;
 						double[][] Lucene = null;

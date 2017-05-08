@@ -1,10 +1,10 @@
-'d
-'ll
-'m
-'re
-'s
-'t
-'ve
+d
+ll
+m
+re
+s
+t
+ve
 ZT
 ZZ
 a

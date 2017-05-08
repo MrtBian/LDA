@@ -62,15 +62,18 @@ public class Textread {
 			String[] strs = temp.split("[^a-z]");
 			ArrayList<String> tempArray = new ArrayList<String>();
 			for (String s : strs) {
-				/*
-				 * Stemmer stem = new Stemmer(); char[] c = s.toCharArray();
-				 * stem.add(c, c.length); stem.stem(); String t =
-				 * stem.toString(); if (!stopwords.contains(t) && t.length() >
-				 * 1) { tempArray.add(t); }
-				 */
 
 				if (!stopwords.contains(s) && s.length() > 1) {
-					tempArray.add(s);
+					//stemming
+					Stemmer stem = new Stemmer();
+					char[] c = s.toCharArray();
+					stem.add(c, c.length);
+					stem.stem();
+					String t = stem.toString();
+					if (!stopwords.contains(t) && t.length() > 1) {
+						tempArray.add(t);
+					}
+					tempArray.add(t);
 				}
 
 			}

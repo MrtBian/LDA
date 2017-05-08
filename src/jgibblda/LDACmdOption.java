@@ -23,13 +23,13 @@ public class LDACmdOption {
 	public String modelName = "";
 
 	@Option(name = "-alpha", usage = "Specify alpha")
-	public double alpha = 0.2;
+	public double alpha = 0.1;
 
 	@Option(name = "-beta", usage = "Specify beta")
-	public double beta = 0.1;
+	public double beta = 0.02;
 
 	@Option(name = "-ntopics", usage = "Specify the number of topics")
-	public int K = 5;
+	public int K = 10;
 
 	@Option(name = "-niters", usage = "Specify the number of iterations")
 	public int niters = 300;
@@ -38,7 +38,7 @@ public class LDACmdOption {
 	public int savestep = 100;
 
 	@Option(name = "-twords", usage = "Specify the number of most likely words to be printed for each topic")
-	public int twords = 5;
+	public int twords = 20;
 
 	@Option(name = "-withrawdata", usage = "Specify whether we include raw data in the input")
 	public boolean withrawdata = false;
